@@ -4,10 +4,11 @@ import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
 import { Skeleton } from "@/components/ui/skeleton"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts"
 
 export default function VehicleTypeDistribution() {
   const [data, setData] = useState([])
-  const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,24 +94,23 @@ export default function VehicleTypeDistribution() {
       ) : (
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
+            <BarChart
+              data={data.filter((d) => d.value > 0)}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis tickFormatter={formatNumber} />
               <Tooltip content={<CustomTooltip />} />
               <Legend />
-            </PieChart>
+              <Bar
+                dataKey="value"
+                name="Jumlah Kendaraan"
+                fill="hsl(var(--chart-1))"
+                radius={[8, 8, 0, 0]}
+                maxBarSize={60}
+              />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       )}
